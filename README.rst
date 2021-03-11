@@ -1,6 +1,6 @@
-=======================================
+=============================
 django-ok-cart |PyPI version|
-=======================================
+=============================
 
 |Upload Python Package| |Code Health| |Python Versions| |PyPI downloads| |license| |Project Status|
 
@@ -39,194 +39,194 @@ Available settings
 
 ``CART_ADD_PIPELINES`` - Functions to run after adding each passed item to the cart.
 
-.. code:: python
-	
-	# settings.py
-	
-    CART_ADD_PIPELINES = (
-       'apps.store.contrib.cart.pipelines.save_shop_id_to_cart_parameters',
-    )
-    	
-	# apps.store.contrib.cart.pipelines.py
-	
-    def save_shop_id_to_cart_parameters(
-		    cart: 'Cart',
-		    user: 'User',
-		    content_object: 'Model',
-		    cart_item: 'CartItem',
-		    cart_group: 'CartGroup',
-		    **kwargs
-    ):
-        if isinstance(content_object, Product) and cart_group:
-            cart_group.parameters['shop_id'] = content_object.shop_id
-            cart_group.save(update_fields=['parameters'])
-            cart_item.parameters['shop_id'] = content_object.shop_id
-            cart_item.save(update_fields=['parameters'])
+	.. code:: python
+		
+		# settings.py
+		
+		CART_ADD_PIPELINES = (
+		   'apps.store.contrib.cart.pipelines.save_shop_id_to_cart_parameters',
+		)
+			
+		# apps.store.contrib.cart.pipelines.py
+		
+		def save_shop_id_to_cart_parameters(
+				cart: 'Cart',
+				user: 'User',
+				content_object: 'Model',
+				cart_item: 'CartItem',
+				cart_group: 'CartGroup',
+				**kwargs
+		):
+		    if isinstance(content_object, Product) and cart_group:
+		        cart_group.parameters['shop_id'] = content_object.shop_id
+		        cart_group.save(update_fields=['parameters'])
+		        cart_item.parameters['shop_id'] = content_object.shop_id
+		        cart_item.save(update_fields=['parameters'])
 
 
 ``CART_POST_ADD_PIPELINES`` - Functions to run after adding all passed items to the cart. 
 
 	Note: To save cart items prices you need to implement your custom pipeline like in example below.
 
-.. code:: python
-	
-	# settings.py
+	.. code:: python
 		
-    CART_POST_ADD_PIPELINES = (
-       'apps.store.contrib.cart.pipelines.apply_product_prices_to_cart',
-    )
-    
-    # apps.store.contrib.cart.pipelines.py
-    	
-    from ok_cart.selectors import get_cart_items_by_cart
-    from apps.store.models import Product
-    from apps.store.selectors import get_product_price
-    from shared.utils import get_content_type
-    	
-	def get_product_cart_items(
-		    *, 
-		    cart: 'Cart',
-		    with_related: bool = True
-	) -> 'QuerySet':
-		cart_items = (
-		    get_cart_items_by_cart(
-		        cart=cart,
-		        with_related=with_related
-		    )
-		    .filter(
-		        content_type=get_content_type(Product)
-		    )
+		# settings.py
+			
+		CART_POST_ADD_PIPELINES = (
+		   'apps.store.contrib.cart.pipelines.apply_product_prices_to_cart',
 		)
-
-		return cart_items
-    	
-	def get_cart_item_price(
-		    *,
-		    content_object: 'Model',
-		    user: 'User',
-		    cart: 'Cart',
-		    **kwargs
-	) -> Decimal:
-		"""
-		Return price for specific type of object
-		"""
-		price = None
-
-		if isinstance(content_object, Product):
-		    price = get_product_price(product=content_object)
-
-		return price
-    		
-    def apply_product_prices_to_cart(
-		    *,
-		    cart: 'Cart',
-		    user: 'User',
-		    **kwargs
-    ):
-		cart_items = (
-			get_product_cart_items(
-				cart=cart,
-				with_related=False
-			)
-		)
-
-		for cart_item in cart_items:
-			price = (
-				get_cart_item_price(
-					content_object=cart_item.content_object,
-					user=user,
-					cart=cart,
+		
+		# apps.store.contrib.cart.pipelines.py
+			
+		from ok_cart.selectors import get_cart_items_by_cart
+		from apps.store.models import Product
+		from apps.store.selectors import get_product_price
+		from shared.utils import get_content_type
+			
+		def get_product_cart_items(
+				*, 
+				cart: 'Cart',
+				with_related: bool = True
+		) -> 'QuerySet':
+			cart_items = (
+				get_cart_items_by_cart(
+				    cart=cart,
+				    with_related=with_related
+				)
+				.filter(
+				    content_type=get_content_type(Product)
 				)
 			)
-			cart_item.price = price
-			cart_item.save()
+
+			return cart_items
+			
+		def get_cart_item_price(
+				*,
+				content_object: 'Model',
+				user: 'User',
+				cart: 'Cart',
+				**kwargs
+		) -> Decimal:
+			"""
+			Return price for specific type of object
+			"""
+			price = None
+
+			if isinstance(content_object, Product):
+				price = get_product_price(product=content_object)
+
+			return price
+				
+		def apply_product_prices_to_cart(
+				*,
+				cart: 'Cart',
+				user: 'User',
+				**kwargs
+		):
+			cart_items = (
+				get_product_cart_items(
+					cart=cart,
+					with_related=False
+				)
+			)
+
+			for cart_item in cart_items:
+				price = (
+					get_cart_item_price(
+						content_object=cart_item.content_object,
+						user=user,
+						cart=cart,
+					)
+				)
+				cart_item.price = price
+				cart_item.save()
 
 
 ``CART_ELEMENT_REPRESENTATION_SERIALIZERS`` - Serializers to represent cart items objects.
 
-.. code:: python
+	.. code:: python
 
-	# settings.py
-	
-    CART_ELEMENT_REPRESENTATION_SERIALIZERS = {
-        'store.Product': 'api.rest.store.serializers.product.retrieve.ProductCartRetrieveSerializer',
-    }
+		# settings.py
+		
+		CART_ELEMENT_REPRESENTATION_SERIALIZERS = {
+		    'store.Product': 'api.rest.store.serializers.product.retrieve.ProductCartRetrieveSerializer',
+		}
 
 
 ``CART_ELEMENT_ALLOWED_TYPES`` - Tuple of tuples of cart items allowed types.
 
-.. code:: python
+	.. code:: python
 
-	# settings.py
-	
-    CART_ELEMENT_ALLOWED_TYPES = (
-        ('store', 'product'),
-    )
+		# settings.py
+		
+		CART_ELEMENT_ALLOWED_TYPES = (
+		    ('store', 'product'),
+		)
 
 
 ``CART_PRICE_PROCESSOR`` - Function to modify cart prices, like converting to another currency.
 
-.. code:: python
+	.. code:: python
 
-	# settings.py
-	
-    CART_PRICE_PROCESSOR = 'apps.store.contrib.cart.cart_price_processor'
-    
-    # apps.store.contrib.cart.price.py
-    	
-    def cart_price_processor(
-		    *,
-		    request,
-		    price
-    ):
-        return price
+		# settings.py
+		
+		CART_PRICE_PROCESSOR = 'apps.store.contrib.cart.cart_price_processor'
+		
+		# apps.store.contrib.cart.price.py
+			
+		def cart_price_processor(
+				*,
+				request,
+				price
+		):
+		    return price
 
 
 ``CART_BASE_API_VIEW`` - Base API View for your cart views.
 
-.. code:: python
+	.. code:: python
 
-	# settings.py
+		# settings.py
 
-    CART_BASE_API_VIEW = 'apps.store.contrib.cart.StandardsMixin'
+		CART_BASE_API_VIEW = 'apps.store.contrib.cart.StandardsMixin'
 
 
 ``CART_GETTER`` - Function to get or create cart. ``ok_cart.selectors.get_cart_from_request`` by default.
 
-.. code:: python
+	.. code:: python
 
-	# settings.py
+		# settings.py
 
-    CART_GETTER = 'apps.store.contrib.cart.selectors.cart_getter'
+		CART_GETTER = 'apps.store.contrib.cart.selectors.cart_getter'
 
-	# store.contrib.cart.selectors.py
-	
-	def cart_getter(
-		    *,
-		    request: 'HttpRequest',
-		    cart_queryset: 'QuerySet' = Cart.objects.open().optimized(),
-		    auto_create: bool = True
-	) -> 'Cart':
-		pass
+		# store.contrib.cart.selectors.py
+		
+		def cart_getter(
+				*,
+				request: 'HttpRequest',
+				cart_queryset: 'QuerySet' = Cart.objects.open().optimized(),
+				auto_create: bool = True
+		) -> 'Cart':
+			pass
 
 
 Quickstart
 ==========
 
-- To enable cart views, add next URL patterns: 
+To enable cart views, add next URL patterns: 
 
-.. code:: python
+	.. code:: python
 
-    urlpatterns = [
-        ...
-        path('', include('ok_cart.api.urls')),
-    ]
+		urlpatterns = [
+		    ...
+		    path('', include('ok_cart.api.urls')),
+		]
     
     
 Endpoints
 *********
 
-1. ``/api/v1/cart/change/`` - API View to add items to cart. ``type`` value is an a structure like ``app_label.model_name``.
+1. ``/api/v1/cart/change/`` - API View to add items to cart. ``type`` value is a structure like ``app_label.model_name``.
     
     Possible payload:
 
