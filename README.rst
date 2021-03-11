@@ -101,11 +101,11 @@ Note: To save cart items prices you need to implement your custom pipeline like 
         return cart_items
 
     def get_cart_item_price(
-        *,
-        content_object: 'Model',
-        user: 'User',
-        cart: 'Cart',
-        **kwargs
+            *,
+            content_object: 'Model',
+            user: 'User',
+            cart: 'Cart',
+            **kwargs
     ) -> Decimal:
         """
         Return price for specific type of object
@@ -118,10 +118,10 @@ Note: To save cart items prices you need to implement your custom pipeline like 
         return price
 
     def apply_product_prices_to_cart(
-        *,
-        cart: 'Cart',
-        user: 'User',
-        **kwargs
+            *,
+            cart: 'Cart',
+            user: 'User',
+            **kwargs
     ):
         cart_items = (
             get_product_cart_items(
