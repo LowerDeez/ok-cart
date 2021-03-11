@@ -33,9 +33,6 @@ def cart_element_representation_serializer(
 
 
 def get_base_api_view():
-    """
-    Returns custom pagination class, set in settings
-    """
     BaseAPIView = settings.BASE_API_VIEW
 
     if BaseAPIView is None:

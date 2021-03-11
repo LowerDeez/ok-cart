@@ -27,7 +27,7 @@ def get_cart_from_request(
         auto_create: bool = True
 ) -> 'Cart':
     """
-    Fetch cart from database or create a new one based on cookie
+    Fetch cart from database or create a new one
     """
     if request.user.is_authenticated:
         cart, _ = get_or_create_user_cart(
