@@ -90,22 +90,22 @@ Available settings
 		) -> 'QuerySet':
 			cart_items = (
 				get_cart_items_by_cart(
-				    cart=cart,
-				    with_related=with_related
+					cart=cart,
+					with_related=with_related
 				)
 				.filter(
-				    content_type=get_content_type(Product)
+					content_type=get_content_type(Product)
 				)
 			)
 
 			return cart_items
 			
 		def get_cart_item_price(
-				*,
-				content_object: 'Model',
-				user: 'User',
-				cart: 'Cart',
-				**kwargs
+			*,
+			content_object: 'Model',
+			user: 'User',
+			cart: 'Cart',
+			**kwargs
 		) -> Decimal:
 			"""
 			Return price for specific type of object
@@ -118,10 +118,10 @@ Available settings
 			return price
 				
 		def apply_product_prices_to_cart(
-				*,
-				cart: 'Cart',
-				user: 'User',
-				**kwargs
+			*,
+			cart: 'Cart',
+			user: 'User',
+			**kwargs
 		):
 			cart_items = (
 				get_product_cart_items(
@@ -232,14 +232,14 @@ Endpoints
 
     .. code:: json
 
-        [
-		  {
-			"element": {
-			  "id": "9619f790-9a02-4ac3-ad34-22e4da3a6d54",
-			  "type": "store.product"
-			},
-			"quantity": 1
-		  }
+		[
+			{
+				"element": {
+					"id": "9619f790-9a02-4ac3-ad34-22e4da3a6d54",
+					"type": "store.product"
+				},
+				"quantity": 1
+			}
 		]
 
 
@@ -252,9 +252,9 @@ Endpoints
 
     .. code:: json
 
-        {
-		  "quantity": 3,
-		  "total_price": 750
+		{
+			"quantity": 3,
+			"total_price": 750
 		}
 
 
@@ -264,54 +264,54 @@ Endpoints
 
     .. code:: json
 
-        {
-		  "groups": [
-			{
-			  "id": 34,
-			  "price": 750,
-			  "base": {
-				"element": {
-				  "id": "9619f790-9a02-4ac3-ad34-22e4da3a6d54",
-				  "caption": "Ноутбук",
-				  "type": "store.product",
-				  "props": {
-					"title": "Ноутбук",
-					"short_description": "Ноут для чайников",
-					"category": {
-					  "id": 1,
-					  "caption": "Ноутбуки и компьютеры",
-					  "type": "store.category",
-					  "props": {
-						"id": 1,
-						"label": "noutbuk-komp",
-						"title": "Ноутбуки и компьютеры",
-						"parent": null,
-						"depth": 0
-					  }
+		{
+			"groups": [
+				{
+					"id": 34,
+					"price": 750,
+					"base": {
+						"element": {
+							"id": "9619f790-9a02-4ac3-ad34-22e4da3a6d54",
+							"caption": "Ноутбук",
+							"type": "store.product",
+							"props": {
+								"title": "Ноутбук",
+								"short_description": "Ноут для чайников",
+								"category": {
+									"id": 1,
+									"caption": "Ноутбуки и компьютеры",
+									"type": "store.category",
+									"props": {
+										"id": 1,
+										"label": "noutbuk-komp",
+										"title": "Ноутбуки и компьютеры",
+										"parent": null,
+										"depth": 0
+									}
+								},
+								"image": {},
+								"shop": null,
+								"shop_identifier": "",
+								"price": 250,
+								"old_price": null,
+								"url": "/product/noutbuk-0c4qoewu-vxmong1s/"
+							}
+						},
+						"quantity": 3,
+						"price": 250,
+						"parameters": {
+							"shop_id": null
+						}
 					},
-					"image": {},
-					"shop": null,
-					"shop_identifier": "",
-					"price": 250,
-					"old_price": null,
-					"url": "/product/noutbuk-0c4qoewu-vxmong1s/"
-				  }
-				},
-				"quantity": 3,
-				"price": 250,
-				"parameters": {
-				  "shop_id": null
+					"relations": [],
+					"parameters": {
+						"shop_id": null
+					}
 				}
-			  },
-			  "relations": [],
-			  "parameters": {
-				"shop_id": null
-			  }
-			}
-		  ],
-		  "quantity": 3,
-		  "total_price": 750,
-		  "parameters": {}
+			],
+			"quantity": 3,
+			"total_price": 750,
+			"parameters": {}
 		}
 
     	
