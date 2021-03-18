@@ -86,10 +86,8 @@ def clear_cart(*, cart: 'Cart') -> None:
 
 def close_cart(*, cart: 'Cart') -> None:
     cart.status = CART_STATUS_CLOSED
-    cart.is_active = False
     cart.save(update_fields=[
         'status',
-        'is_active'
     ])
 
 
