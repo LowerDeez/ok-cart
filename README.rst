@@ -13,7 +13,7 @@ Install with pip:
 
 .. code:: shell
 
-    $ pip install django-ok-cart
+    $ pip install django-ok-cart djangorestframework
 
 
 Update INSTALLED_APPS:
@@ -23,6 +23,7 @@ Update INSTALLED_APPS:
     INSTALLED_APPS = [
         ...
         'ok_cart',
+        'rest_framework',
         ...
     ]
 
