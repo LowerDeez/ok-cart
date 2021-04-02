@@ -1,14 +1,14 @@
-from typing import Dict, TYPE_CHECKING, Tuple, Union
+from typing import TYPE_CHECKING, Tuple, Union
 
 from django.db.models import Q
 
+from .entities import CartInfo
 from .models import Cart, CartItem
 
 if TYPE_CHECKING:
     from django.contrib.contenttypes.models import ContentType
     from django.db.models import QuerySet
     from django.http.request import HttpRequest
-
 
 __all__ = (
     'get_cart_from_request',
@@ -27,7 +27,7 @@ def get_cart_from_request(
         auto_create: bool = True
 ) -> 'Cart':
     """
-    Fetch cart from database or create a new one
+    Fetch cart from database or create a new one based on cookie
     """
     if request.user.is_authenticated:
         cart, _ = get_or_create_user_cart(
@@ -95,7 +95,7 @@ def get_or_create_anonymous_cart(
 def get_cart_quantity_and_total_price(
         *,
         request: 'HttpRequest',
-) -> Dict:
+) -> 'CartInfo':
     """
     Return total price and quantity for a current cart
     """
@@ -114,10 +114,10 @@ def get_cart_quantity_and_total_price(
     else:
         quantity = total_price = 0
 
-    return {
-        'quantity': quantity,
-        'total_price': total_price
-    }
+    return CartInfo(
+        quantity=quantity,
+        total_price=total_price
+    )
 
 
 def get_cart_item(

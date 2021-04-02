@@ -233,15 +233,17 @@ Possible payload:
 
 .. code:: json
 
-    [
-        {
-            "element": {
-                "id": "9619f790-9a02-4ac3-ad34-22e4da3a6d54",
-                "type": "store.product"
-            },
-            "quantity": 1
-        }
-    ]
+    {
+        "entities": [
+            {
+                "element": {
+                    "id":"9619f790-9a02-4ac3-ad34-22e4da3a6d54",
+                    "type":"store.product"
+                },
+                "quantity":"1"
+            }
+        ]
+    }
 
 
 2. ``/api/v1/cart/clear/`` - API View to remove all items from cart.  
