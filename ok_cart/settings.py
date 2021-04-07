@@ -87,6 +87,10 @@ class LazySettings:
         default=[],
         importable=True,
     )
+    POST_CALCULATIONS_PIPELINES = LazySetting(
+        default=[],
+        importable=True,
+    )
     ELEMENT_REPRESENTATION_SERIALIZERS = LazySetting(
         default={},
         importable=True

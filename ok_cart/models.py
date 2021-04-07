@@ -204,4 +204,4 @@ class CartItem(TimestampsMixin):
         verbose_name_plural = pgettext_lazy("Cart", "Cart items")
 
     def __str__(self) -> str:
-        return smart_str(self.content_object)
+        return str(self.pk)

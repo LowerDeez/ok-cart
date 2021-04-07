@@ -13,7 +13,8 @@ from .utils import get_base_api_view
 from ..models import Cart
 from ..pipelines import (
     run_add_pipelines,
-    run_post_add_pipelines
+    run_post_add_pipelines,
+    run_post_calculations_pipelines
 )
 from ..selectors import (
     get_cart_from_request,
@@ -79,6 +80,11 @@ class CartChangeAPIView(get_base_api_view(), GenericAPIView):
         cart = cart_queryset.get(pk=cart.pk)
 
         update_cart_quantity_and_total_price(cart=cart)
+
+        run_post_calculations_pipelines(
+            cart=cart,
+            user=user
+        )
 
         return cart
 

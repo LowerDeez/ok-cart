@@ -11,6 +11,7 @@ if TYPE_CHECKING:
 __all__ = (
     'run_add_pipelines',
     'run_post_add_pipelines',
+    'run_post_calculations_pipelines'
 )
 
 
@@ -52,6 +53,25 @@ def run_post_add_pipelines(
     Run pipelines after adding all passed items to the cart
     """
     for func in settings.POST_ADD_PIPELINES:
+        func(
+            cart=cart,
+            user=user,
+            cart_items=cart_items,
+            **kwargs
+        )
+
+
+def run_post_calculations_pipelines(
+        *,
+        cart: 'Cart',
+        user: django_settings.AUTH_USER_MODEL,
+        cart_items: Iterable['CartItem'] = None,
+        **kwargs
+):
+    """
+    Run pipelines after adding all passed items to the cart
+    """
+    for func in settings.POST_CALCULATIONS_PIPELINES:
         func(
             cart=cart,
             user=user,
