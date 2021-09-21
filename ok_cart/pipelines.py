@@ -23,6 +23,7 @@ def run_add_pipelines(
         cart_group: Optional['CartGroup'],
         quantity: int,
         parameters: Dict,
+        **kwargs
 ):
     """
     Run pipelines after adding each passed item to the cart
@@ -37,7 +38,8 @@ def run_add_pipelines(
                 cart_item=cart_item,
                 cart_group=cart_group,
                 quantity=quantity,
-                parameters=parameters
+                parameters=parameters,
+                **kwargs
             )
 
 

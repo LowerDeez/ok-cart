@@ -104,7 +104,7 @@ class Cart(TimestampsMixin):
         verbose_name_plural = pgettext_lazy("Cart", "Carts")
 
     def __str__(self) -> str:
-        if self.user:
+        if self.user_id:
             return smart_str(self.user)
 
         return self.session_key

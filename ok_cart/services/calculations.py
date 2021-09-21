@@ -12,10 +12,12 @@ from ..models import CartItem
 from ..selectors import get_cart_items_by_cart
 
 if TYPE_CHECKING:
+    from decimal import Decimal
     from ..models import Cart, CartGroup
 
 __all__ = (
     'update_cart_group_price',
+    'calculate_cart_group_quantity',
     'update_cart_quantity_and_total_price'
 )
 
@@ -42,6 +44,23 @@ def update_cart_group_price(
     cart_group.save(update_fields=[
         'price'
     ])
+
+
+def calculate_cart_group_quantity(
+        *, cart_group: 'CartGroup'
+) -> 'Decimal':
+    cart_items_total_quantity = (
+        CartItem.objects
+        .filter(
+            Q(groups=cart_group) |
+            Q(related_groups=cart_group)
+        )
+        .aggregate(
+            total_quantity=Sum('quantity')
+        )['total_quantity'] or 0
+    )
+    # TODO: save quantity to DB?
+    return cart_items_total_quantity
 
 
 def update_cart_quantity_and_total_price(

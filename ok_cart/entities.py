@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 
 __all__ = (
-    'CartInfo',
+    'CartPriceInfo',
 )
 
 
 @dataclass
-class CartInfo:
+class CartPriceInfo:
     total_price: float
     quantity: int

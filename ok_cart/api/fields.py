@@ -45,7 +45,7 @@ class ContentTypeNaturalKeyField(serializers.CharField):
         except ValueError:
             self.fail('invalid', value=data)
         try:
-            ct = (
+            ct: 'ContentType' = (
                 ContentType.objects
                 .get_by_natural_key(
                     app_label,
@@ -64,7 +64,7 @@ class CartItemElementRelatedField(serializers.RelatedField):
             cart_element_representation_serializer(
                 value=value,
                 serializer_context=self.context
-            )
+            ).data
         )
 
 

@@ -55,6 +55,7 @@ class CartItemRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = [
+            'id',
             'element',
             'quantity',
             'price',

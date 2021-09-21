@@ -13,6 +13,7 @@ from ..services.cart_item import (
     delete_cart_item,
     update_cart_item
 )
+from ..settings import settings as cart_settings
 
 if TYPE_CHECKING:
     from django.contrib.contenttypes.models import ContentType
@@ -48,6 +49,11 @@ def add_item_to_cart(
 
     if cart_item:
         cart_item.quantity += quantity
+
+        for validator in cart_settings.CART_ITEM_QUANTITY_VALIDATORS:
+            validator(
+                cart_item=cart_item
+            )
 
         if cart_item.quantity <= 0:
             delete_cart_item(

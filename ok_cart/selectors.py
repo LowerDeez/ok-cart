@@ -1,9 +1,11 @@
 from typing import TYPE_CHECKING, Tuple, Union
 
 from django.db.models import Q
+from django.contrib.postgres.fields.jsonb import KeyTextTransform
 
-from .entities import CartInfo
+from .entities import CartPriceInfo
 from .models import Cart, CartItem
+from .settings import settings
 
 if TYPE_CHECKING:
     from django.contrib.contenttypes.models import ContentType
@@ -95,7 +97,7 @@ def get_or_create_anonymous_cart(
 def get_cart_quantity_and_total_price(
         *,
         request: 'HttpRequest',
-) -> 'CartInfo':
+) -> 'CartPriceInfo':
     """
     Return total price and quantity for a current cart
     """
@@ -107,16 +109,24 @@ def get_cart_quantity_and_total_price(
         ),
         auto_create=False
     )
-
     if cart:
         quantity = cart.quantity
         total_price = cart.total_price
     else:
         quantity = total_price = 0
 
-    return CartInfo(
+    return CartPriceInfo(
         quantity=quantity,
         total_price=total_price
+    )
+
+
+def get_total_price(*, request: 'HttpRequest', cart: 'Cart'):
+    price = cart.total_price
+
+    return settings.PRICE_PROCESSOR(
+        request=request,
+        price=price
     )
 
 

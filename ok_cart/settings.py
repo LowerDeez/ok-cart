@@ -87,6 +87,10 @@ class LazySettings:
         default=[],
         importable=True,
     )
+    CART_ITEM_QUANTITY_VALIDATORS = LazySetting(
+        default=[],
+        importable=True,
+    )
     ELEMENT_REPRESENTATION_SERIALIZERS = LazySetting(
         default={},
         importable=True
@@ -106,6 +110,12 @@ class LazySettings:
         default='ok_cart.selectors.get_cart_from_request',
         importable=True
     )
+    VIEW_RESPONSE_MODIFIER = LazySetting(
+        default=lambda request, cart, serializer: serializer.data,
+        importable=True
+    )
 
 
-settings = LazySettings(django_settings)
+cart_settings = getattr(django_settings, 'CART', django_settings)
+
+settings = LazySettings(cart_settings)

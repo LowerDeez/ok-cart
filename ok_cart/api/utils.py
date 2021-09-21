@@ -27,12 +27,15 @@ def cart_element_representation_serializer(
             return serializer_class(
                 instance=value,
                 context=serializer_context
-            ).data
+            )
 
     raise Exception(_('Unexpected type of cart element'))
 
 
 def get_base_api_view():
+    """
+    Returns custom pagination class, set in settings
+    """
     BaseAPIView = settings.BASE_API_VIEW
 
     if BaseAPIView is None:

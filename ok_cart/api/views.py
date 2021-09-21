@@ -47,8 +47,6 @@ class CartChangeAPIView(get_base_api_view(), GenericAPIView):
         )
         user = self.request.user
 
-        cart_items = []
-
         for entity in entities:
             content_object = entity['element']['content_object']
             cart_item, cart_group = add_item_to_cart(
@@ -58,9 +56,8 @@ class CartChangeAPIView(get_base_api_view(), GenericAPIView):
                 object_id=entity['element']['id'],
                 content_object=content_object,
                 quantity=entity['quantity'],
-                parameters=entity.get('parameters', {})
+                parameters=entity.get('parameters', {}),
             )
-            cart_items.append(cart_item)
             run_add_pipelines(
                 cart=cart,
                 user=user,
@@ -68,12 +65,14 @@ class CartChangeAPIView(get_base_api_view(), GenericAPIView):
                 cart_item=cart_item,
                 cart_group=cart_group,
                 quantity=entity['quantity'],
-                parameters=entity.get('parameters')
+                parameters=entity.get('parameters'),
+                request=self.request
             )
 
         run_post_add_pipelines(
             cart=cart,
-            user=user
+            user=user,
+            request=self.request
         )
 
         cart = cart_queryset.get(pk=cart.pk)
@@ -88,11 +87,15 @@ class CartChangeAPIView(get_base_api_view(), GenericAPIView):
 
         cart = self.perform_action(serializer)
 
-        data = (
-            CartRetrieveSerializer(
-                instance=cart,
-                context=self.get_serializer_context()
-            ).data
+        response_serializer = CartRetrieveSerializer(
+            instance=cart,
+            context=self.get_serializer_context()
+        )
+
+        data = settings.VIEW_RESPONSE_MODIFIER(
+            request=request,
+            cart=cart,
+            serializer=response_serializer
         )
 
         return Response(
@@ -130,7 +133,25 @@ class CartRetrieveAPIView(get_base_api_view(), RetrieveAPIView):
             auto_create=False
         )
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        data = settings.VIEW_RESPONSE_MODIFIER(
+            request=request,
+            cart=instance,
+            serializer=serializer
+        )
+        return Response(data)
 
-class CartQuantityRetrieveAPIView(CartRetrieveAPIView):
+
+class CartQuantityRetrieveAPIView(get_base_api_view(), RetrieveAPIView):
+    permission_classes = (AllowAny,)
     serializer_class = CartQuantityRetrieveSerializer
     queryset = Cart.objects.open().only('quantity', 'total_price')
+
+    def get_object(self):
+        return get_cart_from_request(
+            request=self.request,
+            cart_queryset=self.get_queryset(),
+            auto_create=False
+        )
