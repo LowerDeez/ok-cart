@@ -211,6 +211,15 @@ Note: To save cart items prices you need to implement your custom pipeline like 
         pass
 
 
+``CART_MERGE_ENABLED`` - Setting to enable carts merge during login/logout flow. To make it work properly, add this setting:
+
+.. code:: python
+
+    # settings.py
+
+    SESSION_ENGINE = 'ok_cart.session_store'
+
+
 Quickstart
 ==========
 

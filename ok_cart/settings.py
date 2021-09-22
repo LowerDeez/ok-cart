@@ -114,6 +114,10 @@ class LazySettings:
         default=lambda request, cart, serializer: serializer.data,
         importable=True
     )
+    MERGE_ENABLED = LazySetting(
+        default=False,
+        importable=False
+    )
 
 
 cart_settings = getattr(django_settings, 'CART', django_settings)

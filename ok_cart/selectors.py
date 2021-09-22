@@ -1,7 +1,6 @@
 from typing import TYPE_CHECKING, Tuple, Union
 
 from django.db.models import Q
-from django.contrib.postgres.fields.jsonb import KeyTextTransform
 
 from .entities import CartPriceInfo
 from .models import Cart, CartItem
@@ -33,13 +32,17 @@ def get_cart_from_request(
     """
     if request.user.is_authenticated:
         cart, _ = get_or_create_user_cart(
-            request=request,
+            user=request.user,
+            session_key=request.session.session_key,
             cart_queryset=cart_queryset,
             auto_create=auto_create
         )
     else:
+        if request.session.session_key is None:
+            request.session.create()
+
         cart, _ = get_or_create_anonymous_cart(
-            request=request,
+            session_key=request.session.session_key,
             cart_queryset=cart_queryset,
             auto_create=auto_create
         )
@@ -48,7 +51,8 @@ def get_cart_from_request(
 
 def get_or_create_user_cart(
         *,
-        request: 'HttpRequest',
+        user,
+        session_key: str = '',
         cart_queryset: 'QuerySet' = Cart.objects.open().optimized(),
         auto_create: 'bool' = False
 ) -> Tuple['Cart', bool]:
@@ -57,38 +61,35 @@ def get_or_create_user_cart(
     """
     if auto_create:
         return cart_queryset.update_or_create(
-            user=request.user,
+            user=user,
             defaults={
-                'session_key': request.session.session_key
+                'session_key': session_key
             }
         )
 
     return (
-        cart_queryset.filter(user=request.user).first(),
+        cart_queryset.filter(user=user).first(),
         False
     )
 
 
 def get_or_create_anonymous_cart(
         *,
-        request: 'HttpRequest',
+        session_key: str,
         cart_queryset: 'QuerySet' = Cart.objects.open().optimized(),
         auto_create: bool = False
 ) -> Tuple['Cart', bool]:
     """
     Return an active cart for an anonymous user or create it
     """
-    if request.session.session_key is None:
-        request.session.create()
-
     if auto_create:
         return cart_queryset.get_or_create(
-            session_key=request.session.session_key
+            session_key=session_key
         )
 
     return (
         cart_queryset.filter(
-            session_key=request.session.session_key
+            session_key=session_key
         ).first(),
         False
     )

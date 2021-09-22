@@ -32,6 +32,7 @@ def create_cart_item(
     cart_group = CartGroup.objects.create(
         cart=cart,
         base=cart_item,
+        parameters=parameters or {}
     )
 
     return cart_item, cart_group
