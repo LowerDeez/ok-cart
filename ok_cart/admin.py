@@ -49,7 +49,8 @@ class CartAdmin(admin.ModelAdmin):
     list_display = [
         'user',
         'status',
-        'updated_at'
+        'session_key',
+        'updated_at',
     ]
     list_editable = [
         'status'

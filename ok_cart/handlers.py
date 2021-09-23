@@ -27,5 +27,9 @@ def user_logged_in_handler(request, user, **kwargs):
         if anonymous_cart:
             user_cart, _ = get_or_create_user_cart(user=user)
 
-            if user_cart and anonymous_cart.pk != user_cart.pk:
-                merge(carts=[user_cart, anonymous_cart])
+            if user_cart:
+                if anonymous_cart.pk != user_cart.pk:
+                    merge(carts=[user_cart, anonymous_cart])
+            else:
+                anonymous_cart.user = user
+                anonymous_cart.save(update_fields=["user"])
