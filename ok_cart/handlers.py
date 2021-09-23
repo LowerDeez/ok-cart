@@ -22,10 +22,10 @@ def user_logged_in_handler(request, user, **kwargs):
     old_session_key = request.session.get_old_session_key()
 
     if old_session_key:
-        previous_cart, _ = get_or_create_anonymous_cart(session_key=old_session_key)
+        anonymous_cart, _ = get_or_create_anonymous_cart(session_key=old_session_key)
 
-        if previous_cart:
+        if anonymous_cart:
             user_cart, _ = get_or_create_user_cart(user=user)
 
-            if previous_cart.pk != user_cart.pk:
-                merge(carts=[user_cart, previous_cart])
+            if user_cart and anonymous_cart.pk != user_cart.pk:
+                merge(carts=[user_cart, anonymous_cart])

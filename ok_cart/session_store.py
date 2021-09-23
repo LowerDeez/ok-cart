@@ -20,7 +20,7 @@ class SessionStore(DjangoSessionStore):
 
     def cycle_key(self):
         """
-        Calls in login
+        Calls in login view
 
         Save old session key to get it in `user_logged_in_handler`
         """
@@ -30,7 +30,7 @@ class SessionStore(DjangoSessionStore):
 
     def flush(self):
         """
-        Calls on logout
+        Calls in logout view
 
         Update logged out user's cart with new session key
         """
@@ -44,5 +44,7 @@ class SessionStore(DjangoSessionStore):
                 self.create()
 
             user_cart, _ = get_or_create_user_cart(user=user)
-            user_cart.session_key = self.session_key
-            user_cart.save(update_fields=['session_key'])
+
+            if user_cart:
+                user_cart.session_key = self.session_key
+                user_cart.save(update_fields=['session_key'])
